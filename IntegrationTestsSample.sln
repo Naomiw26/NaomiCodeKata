@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.3.32901.215
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IntegrationTestsSample", "src\IntegrationTestsSample\IntegrationTestsSample.csproj", "{6A930218-0C3F-4FB4-935E-122096C69DA7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RPGCombatKata", "src\IntegrationTestsSample\RPGCombatKata.csproj", "{6A930218-0C3F-4FB4-935E-122096C69DA7}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IntegrationTestsSample.Tests", "tests\IntegrationTestsSample.Tests\IntegrationTestsSample.Tests.csproj", "{C4549E2A-DF29-4077-A5BE-E7A5AB78D967}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RPGCombatKata.Tests", "tests\IntegrationTestsSample.Tests\RPGCombatKata.Tests.csproj", "{C4549E2A-DF29-4077-A5BE-E7A5AB78D967}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
