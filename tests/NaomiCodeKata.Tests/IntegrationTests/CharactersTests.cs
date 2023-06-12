@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Mvc.Testing;
 using Newtonsoft.Json;
 using RPGCombatKata.Api.Characters;
-using RPGCombatKata.Data;
-using System.Net.Http;
+using RPGCombatKata.Api.Data;
+using RPGCombatKata.Domain.Data;
 using Xunit;
 
 namespace RPGCombatKata.Tests.IntegrationTests;

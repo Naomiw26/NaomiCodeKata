@@ -4,8 +4,21 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 17.3.32901.215
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RPGCombatKata.Api", "src\NaomiCodeKata\RPGCombatKata.Api.csproj", "{6A930218-0C3F-4FB4-935E-122096C69DA7}"
+	ProjectSection(ProjectDependencies) = postProject
+		{3F841B68-FB90-4DB1-8D67-4ACD1A189004} = {3F841B68-FB90-4DB1-8D67-4ACD1A189004}
+		{96F25D84-6C8C-44A4-9205-134B30CC52C9} = {96F25D84-6C8C-44A4-9205-134B30CC52C9}
+	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RPGCombatKata.Tests", "tests\NaomiCodeKata.Tests\RPGCombatKata.Tests.csproj", "{C4549E2A-DF29-4077-A5BE-E7A5AB78D967}"
+	ProjectSection(ProjectDependencies) = postProject
+		{6A930218-0C3F-4FB4-935E-122096C69DA7} = {6A930218-0C3F-4FB4-935E-122096C69DA7}
+	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RPGCombatKata.Domain", "RPGCombatKata.Domain\RPGCombatKata.Domain.csproj", "{3F841B68-FB90-4DB1-8D67-4ACD1A189004}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "RPGCombatKata", "RPGCombatKata", "{C7E83070-7F04-4CCE-AF5C-ABE2AFB6E83C}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RPGCombatKata.Infrastructure", "RPGCombatKata.Infrastructure\RPGCombatKata.Infrastructure.csproj", "{96F25D84-6C8C-44A4-9205-134B30CC52C9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,9 +34,23 @@ Global
 		{C4549E2A-DF29-4077-A5BE-E7A5AB78D967}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C4549E2A-DF29-4077-A5BE-E7A5AB78D967}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C4549E2A-DF29-4077-A5BE-E7A5AB78D967}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3F841B68-FB90-4DB1-8D67-4ACD1A189004}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3F841B68-FB90-4DB1-8D67-4ACD1A189004}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3F841B68-FB90-4DB1-8D67-4ACD1A189004}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3F841B68-FB90-4DB1-8D67-4ACD1A189004}.Release|Any CPU.Build.0 = Release|Any CPU
+		{96F25D84-6C8C-44A4-9205-134B30CC52C9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{96F25D84-6C8C-44A4-9205-134B30CC52C9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{96F25D84-6C8C-44A4-9205-134B30CC52C9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{96F25D84-6C8C-44A4-9205-134B30CC52C9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{6A930218-0C3F-4FB4-935E-122096C69DA7} = {C7E83070-7F04-4CCE-AF5C-ABE2AFB6E83C}
+		{C4549E2A-DF29-4077-A5BE-E7A5AB78D967} = {C7E83070-7F04-4CCE-AF5C-ABE2AFB6E83C}
+		{3F841B68-FB90-4DB1-8D67-4ACD1A189004} = {C7E83070-7F04-4CCE-AF5C-ABE2AFB6E83C}
+		{96F25D84-6C8C-44A4-9205-134B30CC52C9} = {C7E83070-7F04-4CCE-AF5C-ABE2AFB6E83C}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {8D1DE4D2-64C1-47D2-9557-39FA470FDA93}

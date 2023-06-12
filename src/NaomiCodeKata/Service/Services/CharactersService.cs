@@ -1,16 +1,24 @@
 ﻿using RPGCombatKata.Api.Characters;
-using RPGCombatKata.Data;
+using RPGCombatKata.Api.Data;
+using RPGCombatKata.Domain.Data;
+using RPGCombatKata.Infrastructure;
 using System.Net;
-using Microsoft.EntityFrameworkCore;
 
-
-namespace RPGCombatKata.Service.Services
+namespace RPGCombatKata.Api.Service.Services
 {
     public class CharactersService : ICharactersService
     {
-        public async Task<GetAllCharactersResponse> GetAllCharacters(CharactersDb db)
+        public ICharacterReader _characterReader;
+        public ICharacterWriter _characterWriter;
+        public CharactersService(ICharacterReader characterReader, ICharacterWriter characterWriter )
         {
-            var characterRecords = await db.Characters.ToListAsync();
+            _characterReader = characterReader;
+            _characterWriter = characterWriter;
+        }
+
+        public async Task<GetAllCharactersResponse> GetAllCharacters()
+        {
+            var characterRecords = await _characterReader.GetAllCharacters();
             if (characterRecords != null)
             {
                 var characters = new List<Character>();
@@ -36,9 +44,9 @@ namespace RPGCombatKata.Service.Services
             };
         }
 
-        public async Task<GetCharacterResponse> GetCharacter(Guid characterId, CharactersDb db)
+        public async Task<GetCharacterResponse> GetCharacter(Guid characterId)
         {
-            var characterRecord = await db.Characters.FindAsync(characterId);
+            var characterRecord = await _characterReader.GetCharacter(characterId);
             if (characterRecord != null)
             {
                 var character = (new Character
@@ -62,11 +70,10 @@ namespace RPGCombatKata.Service.Services
             };
         }
 
-        public async Task<CreateCharacterResponse> CreateCharacter(CharactersDb db)
+        public async Task<CreateCharacterResponse> CreateCharacter()
         {
             var characterRecord = new CharacterRecord { id = new Guid(), health = Character.MaxHealth,};
-            db.Add(characterRecord);
-            await db.SaveChangesAsync();
+            await _characterWriter.CreateCharacter(characterRecord);
             var character = new Character
             {
                 health = characterRecord.health,
@@ -81,14 +88,14 @@ namespace RPGCombatKata.Service.Services
             };
         }
 
-        public async Task<ApplyDamageResponse> ApplyDamage(Guid characterId, ApplyDamageRequest request, CharactersDb db)
+        public async Task<ApplyDamageResponse> ApplyDamage(Guid characterId, ApplyDamageRequest request)
         {
             switch (request.damageType)
             {
                 case DamageType.Normal :
-                   return await DamageCharacter(characterId,request.amount, db);
+                   return await DamageCharacter(characterId,request.amount);
                 case DamageType.Healing:
-                   return await HealCharacter(characterId, request.amount, db);
+                   return await HealCharacter(characterId, request.amount);
                 default:
                     return new ApplyDamageResponse { 
                         damageDealt = 0, 
@@ -98,9 +105,9 @@ namespace RPGCombatKata.Service.Services
             }        
         }
 
-        private async Task<ApplyDamageResponse> DamageCharacter(Guid characterId, int amount, CharactersDb db)
+        private async Task<ApplyDamageResponse> DamageCharacter(Guid characterId, int amount)
         {
-            var characterRecord = await db.Characters.FindAsync(characterId);
+            var characterRecord = await _characterReader.GetCharacter(characterId);
             if (characterRecord != null)
             {
                 characterRecord.health -= amount;
@@ -111,8 +118,7 @@ namespace RPGCombatKata.Service.Services
                     characterRecord.health = 0;
                 }
 
-                db.Characters.Update(characterRecord);
-                await db.SaveChangesAsync();
+                await _characterWriter.UpdateCharacter(characterRecord);
 
                 return new ApplyDamageResponse
                 {
@@ -129,9 +135,9 @@ namespace RPGCombatKata.Service.Services
             };
         }
 
-        private async Task<ApplyDamageResponse> HealCharacter(Guid characterId, int amount, CharactersDb db)
+        private async Task<ApplyDamageResponse> HealCharacter(Guid characterId, int amount)
         {
-            var characterRecord = await db.Characters.FindAsync(characterId);
+            var characterRecord = await _characterReader.GetCharacter(characterId);
             if (characterRecord != null)
             {
                 var character = new Character { id = characterRecord.id , health = characterRecord.health , level = characterRecord.level};
@@ -148,8 +154,7 @@ namespace RPGCombatKata.Service.Services
 
                     characterRecord.health = character.health;
 
-                    db.Characters.Update(characterRecord);
-                    await db.SaveChangesAsync();
+                    await _characterWriter.UpdateCharacter(characterRecord);
 
                     return new ApplyDamageResponse
                     {

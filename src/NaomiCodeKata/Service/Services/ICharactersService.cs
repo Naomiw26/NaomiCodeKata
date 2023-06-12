@@ -1,13 +1,14 @@
 ﻿
 using RPGCombatKata.Api.Characters;
+using RPGCombatKata.Infrasturcture;
 
-namespace RPGCombatKata.Service.Services
+namespace RPGCombatKata.Api.Service.Services
 {
     public interface ICharactersService
     {
-        Task<ApplyDamageResponse> ApplyDamage(Guid characterId, ApplyDamageRequest request, CharactersDb db);
-        Task<CreateCharacterResponse> CreateCharacter(CharactersDb db);
-        Task<GetAllCharactersResponse> GetAllCharacters(CharactersDb db);
-        Task<GetCharacterResponse> GetCharacter(Guid characterId, CharactersDb db);
+        Task<ApplyDamageResponse> ApplyDamage(Guid characterId, ApplyDamageRequest request);
+        Task<CreateCharacterResponse> CreateCharacter();
+        Task<GetAllCharactersResponse> GetAllCharacters();
+        Task<GetCharacterResponse> GetCharacter(Guid characterId);
     }
 }

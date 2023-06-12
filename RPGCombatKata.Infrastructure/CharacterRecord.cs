@@ -1,4 +1,4 @@
-﻿namespace RPGCombatKata.Data
+﻿namespace RPGCombatKata.Infrastructure
 {
     public class CharacterRecord
     {

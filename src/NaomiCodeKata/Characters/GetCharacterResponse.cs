@@ -1,8 +1,8 @@
-﻿using RPGCombatKata.Data;
+﻿using RPGCombatKata.Domain.Data;
 
 namespace RPGCombatKata.Api.Characters
 {
-    public class CreateCharacterResponse : BaseResponse
+    public class GetCharacterResponse : BaseResponse
     {
         public Character character { get; set; }
     }

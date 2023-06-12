@@ -1,4 +1,4 @@
-﻿namespace RPGCombatKata.Data
+﻿namespace RPGCombatKata.Api.Data
 {
     public enum DamageType
     {

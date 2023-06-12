@@ -1,4 +1,4 @@
-﻿namespace RPGCombatKata.Data
+﻿namespace RPGCombatKata.Domain.Data
 {
     public class Character
     {

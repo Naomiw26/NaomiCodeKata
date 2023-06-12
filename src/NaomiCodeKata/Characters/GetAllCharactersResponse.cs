@@ -1,4 +1,4 @@
-﻿using RPGCombatKata.Data;
+﻿using RPGCombatKata.Domain.Data;
 
 namespace RPGCombatKata.Api.Characters
 {
