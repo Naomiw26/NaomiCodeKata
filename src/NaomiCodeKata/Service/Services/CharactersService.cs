@@ -1,16 +1,17 @@
 ﻿using RPGCombatKata.Api.Characters;
 using RPGCombatKata.Api.Data;
+using RPGCombatKata.Domain;
 using RPGCombatKata.Domain.Data;
-using RPGCombatKata.Infrastructure;
 using System.Net;
 
 namespace RPGCombatKata.Api.Service.Services
 {
     public class CharactersService : ICharactersService
     {
-        public ICharacterReader _characterReader;
-        public ICharacterWriter _characterWriter;
-        public CharactersService(ICharacterReader characterReader, ICharacterWriter characterWriter )
+        private ICharacterReader _characterReader;
+        private ICharacterWriter _characterWriter;
+
+        public CharactersService(ICharacterWriter characterWriter,ICharacterReader characterReader)
         {
             _characterReader = characterReader;
             _characterWriter = characterWriter;
@@ -18,17 +19,9 @@ namespace RPGCombatKata.Api.Service.Services
 
         public async Task<GetAllCharactersResponse> GetAllCharacters()
         {
-            var characterRecords = await _characterReader.GetAllCharacters();
-            if (characterRecords != null)
+            var characters = await _characterReader.GetAllCharacters();
+            if (characters != null)
             {
-                var characters = new List<Character>();
-                foreach (var characterRecord in characterRecords) {
-                    characters.Add(new Character { 
-                        health = characterRecord.health, 
-                        id = characterRecord.id, 
-                        level = characterRecord.level
-                    });
-                }
                 return new GetAllCharactersResponse
                 {
                     characters = characters,
@@ -46,15 +39,9 @@ namespace RPGCombatKata.Api.Service.Services
 
         public async Task<GetCharacterResponse> GetCharacter(Guid characterId)
         {
-            var characterRecord = await _characterReader.GetCharacter(characterId);
-            if (characterRecord != null)
+            var character = await _characterReader.GetCharacter(characterId);
+            if (character != null)
             {
-                var character = (new Character
-                {
-                    health = characterRecord.health,
-                    id = characterRecord.id,
-                    level = characterRecord.level
-                });
                 return new GetCharacterResponse
                 {
                     character = character,
@@ -72,14 +59,10 @@ namespace RPGCombatKata.Api.Service.Services
 
         public async Task<CreateCharacterResponse> CreateCharacter()
         {
-            var characterRecord = new CharacterRecord { id = new Guid(), health = Character.MaxHealth,};
-            await _characterWriter.CreateCharacter(characterRecord);
-            var character = new Character
-            {
-                health = characterRecord.health,
-                id = characterRecord.id,
-                level = characterRecord.level
-            };
+            var character = new Character();
+            character.id = Guid.NewGuid();
+            await _characterWriter.AddCharacter(character);
+  
             return new CreateCharacterResponse
             {
                 character = character,
@@ -107,18 +90,18 @@ namespace RPGCombatKata.Api.Service.Services
 
         private async Task<ApplyDamageResponse> DamageCharacter(Guid characterId, int amount)
         {
-            var characterRecord = await _characterReader.GetCharacter(characterId);
-            if (characterRecord != null)
+            var character = await _characterReader.GetCharacter(characterId);
+            if (character != null)
             {
-                characterRecord.health -= amount;
+                character.health -= amount;
                 var damageDealt = amount;
-                if (characterRecord.health < 0)
+                if (character.health < 0)
                 {
-                    damageDealt += characterRecord.health;
-                    characterRecord.health = 0;
+                    damageDealt += character.health;
+                    character.health = 0;
                 }
 
-                await _characterWriter.UpdateCharacter(characterRecord);
+                await _characterWriter.UpdateCharacter(character);
 
                 return new ApplyDamageResponse
                 {
@@ -137,11 +120,9 @@ namespace RPGCombatKata.Api.Service.Services
 
         private async Task<ApplyDamageResponse> HealCharacter(Guid characterId, int amount)
         {
-            var characterRecord = await _characterReader.GetCharacter(characterId);
-            if (characterRecord != null)
-            {
-                var character = new Character { id = characterRecord.id , health = characterRecord.health , level = characterRecord.level};
-                
+            var character = await _characterReader.GetCharacter(characterId);
+            if (character != null)
+            {               
                 if (character.isAlive)
                 {
                     character.health += amount;
@@ -152,9 +133,7 @@ namespace RPGCombatKata.Api.Service.Services
                         character.health = Character.MaxHealth;           
                     }
 
-                    characterRecord.health = character.health;
-
-                    await _characterWriter.UpdateCharacter(characterRecord);
+                    await _characterWriter.UpdateCharacter(character);
 
                     return new ApplyDamageResponse
                     {

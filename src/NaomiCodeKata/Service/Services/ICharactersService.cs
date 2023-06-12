@@ -1,6 +1,5 @@
 ﻿
 using RPGCombatKata.Api.Characters;
-using RPGCombatKata.Infrasturcture;
 
 namespace RPGCombatKata.Api.Service.Services
 {

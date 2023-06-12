@@ -1,17 +1,21 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using RPGCombatKata.Api.Characters;
 using RPGCombatKata.Api.Service.Services;
+using RPGCombatKata.Domain;
 using RPGCombatKata.Infrastructure;
-using RPGCombatKata.Infrasturcture;
+
 
 var appBuilder = WebApplication.CreateBuilder(args);
 
+
 var services = appBuilder.Services;
 services.AddDbContext<CharactersDb>(opt => opt.UseInMemoryDatabase("Characters"));
-services.AddSingleton<ICharacterReader,CharacterReader>();
-services.AddSingleton<ICharacterWriter,CharacterWriter>();
-services.AddSingleton<CharactersService>();
+services.AddScoped<CharacterRepository>();
+services.AddScoped<ICharacterReader>(x => x.GetRequiredService<CharacterRepository>());
+services.AddScoped<ICharacterWriter>(x => x.GetRequiredService<CharacterRepository>());
+services.AddScoped<CharactersService>();
 
 using var app = appBuilder.Build();
 

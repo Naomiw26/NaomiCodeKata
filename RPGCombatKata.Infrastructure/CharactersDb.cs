@@ -1,7 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using RPGCombatKata.Infrastructure;
 
-namespace RPGCombatKata.Infrasturcture;
+namespace RPGCombatKata.Infrastructure;
 public class CharactersDb : DbContext
 {
     public CharactersDb(DbContextOptions<CharactersDb> options)
