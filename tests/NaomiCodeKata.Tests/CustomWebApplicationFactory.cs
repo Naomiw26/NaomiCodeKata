@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc.Testing;
 
-namespace IntegrationTestsSample.Tests;
+namespace NaomiCodeKata.Tests;
 
 // <snippet1>
 public class CustomWebApplicationFactory<TProgram>

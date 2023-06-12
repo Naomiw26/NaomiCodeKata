@@ -3,8 +3,8 @@
     "windowsAuthentication": false,
     "anonymousAuthentication": true,
     "iisExpress": {
-      "applicationUrl": "http://localhost:58625/",
-      "sslPort": 44304
+      "applicationUrl": "http://localhost:58605/",
+      "sslPort": 44341
     }
   },
   "profiles": {
@@ -15,7 +15,7 @@
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },
-    "IntegrationTestsSample.Tests": {
+    "NaomiCodeKata": {
       "commandName": "Project",
       "launchBrowser": true,
       "environmentVariables": {

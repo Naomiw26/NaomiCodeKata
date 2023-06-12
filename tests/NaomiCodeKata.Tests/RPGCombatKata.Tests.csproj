@@ -17,7 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\IntegrationTestsSample\RPGCombatKata.csproj" />
+    <ProjectReference Include="..\..\src\NaomiCodeKata\RPGCombatKata.Api.csproj" />
   </ItemGroup>
 
 
