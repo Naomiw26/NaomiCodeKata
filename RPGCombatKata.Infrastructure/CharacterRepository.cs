@@ -8,17 +8,17 @@ namespace RPGCombatKata.Infrastructure
     public class CharacterRepository : ICharacterWriter, ICharacterReader
     {
         private CharactersDb _charactersDb;
-        private Mapper mapper;
+        private readonly IMapper _mapper;
 
-        public CharacterRepository(CharactersDb charactersDb)
+        public CharacterRepository(CharactersDb charactersDb, IMapper mapper)
         {
             _charactersDb = charactersDb;
-            mapper = MapperConfig.InitializeAutomapper();
+            _mapper = mapper;
         }
 
         public async Task<bool> AddCharacter(Character character)
         {
-            var characterRecord = mapper.Map<CharacterRecord>(character);
+            var characterRecord = _mapper.Map<CharacterRecord>(character);
             _charactersDb.Characters.Add(characterRecord);
             await _charactersDb.SaveChangesAsync();
             return true;
@@ -26,7 +26,7 @@ namespace RPGCombatKata.Infrastructure
 
         public async Task<bool> UpdateCharacter(Character character)
         {
-            var characterRecord = mapper.Map<CharacterRecord>(character);
+            var characterRecord = _mapper.Map<CharacterRecord>(character);
             _charactersDb.Characters.Update(characterRecord);
             await _charactersDb.SaveChangesAsync();
             return true;
@@ -38,7 +38,7 @@ namespace RPGCombatKata.Infrastructure
             var characters = new List<Character>();
             foreach (var record in characterRecords)
             {
-                characters.Add(mapper.Map<Character>(record));
+                characters.Add(_mapper.Map<Character>(record));
             }     
             return characters;
         }
@@ -46,7 +46,7 @@ namespace RPGCombatKata.Infrastructure
         public async Task<Character> GetCharacter(Guid characterId)
         {
             var characterRecord = await _charactersDb.Characters.AsNoTracking().FirstOrDefaultAsync(c => c.id == characterId);
-            var character = mapper.Map<Character>(characterRecord);
+            var character = _mapper.Map<Character>(characterRecord);
             return character;
         }
 

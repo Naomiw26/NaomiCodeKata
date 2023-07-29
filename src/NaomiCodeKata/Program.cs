@@ -1,21 +1,26 @@
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using RPGCombatKata.Api.Characters;
+using RPGCombatKata.Api.Service.Controllers;
+using RPGCombatKata.Api.Service.Exceptions;
 using RPGCombatKata.Api.Service.Services;
 using RPGCombatKata.Domain;
 using RPGCombatKata.Infrastructure;
+using System.Reflection;
 
 
 var appBuilder = WebApplication.CreateBuilder(args);
-
-
 var services = appBuilder.Services;
 services.AddDbContext<CharactersDb>(opt => opt.UseInMemoryDatabase("Characters"));
 services.AddScoped<CharacterRepository>();
 services.AddScoped<ICharacterReader>(x => x.GetRequiredService<CharacterRepository>());
 services.AddScoped<ICharacterWriter>(x => x.GetRequiredService<CharacterRepository>());
+services.AddAutoMapper(typeof(CharacterProfile));
 services.AddScoped<CharactersService>();
+services.AddMvc(options => options.Filters.Add(typeof(ExceptionFilter))).SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
 using var app = appBuilder.Build();
 
@@ -29,25 +34,9 @@ else
     app.UseHsts();
 }
 
+CharactersController controller = new CharactersController(app);
 app.UseHttpsRedirection();
 app.UseRouting();
-
-app.MapGet("/characters", async (CharactersService service) =>
-    Results.Ok(await service.GetAllCharacters())
-);
-
-app.MapGet("/characters/{id}", async ([FromRoute] Guid id, CharactersService service) =>
-    Results.Ok(await service.GetCharacter(id))
-);
-
-app.MapPost("/characters", async (CharactersService service) =>
-     Results.Ok(await service.CreateCharacter())
-);
-
-app.MapPost("/characters/{id}/_applyDamage", async([FromRoute] Guid id, [FromBody] ApplyDamageRequest request, CharactersService service) =>
-     Results.Ok(await service.ApplyDamage(id, request))
-);
-
 app.Run();
 
 public partial class Program

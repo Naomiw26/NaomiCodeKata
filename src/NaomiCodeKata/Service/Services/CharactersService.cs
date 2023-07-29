@@ -1,5 +1,7 @@
 ﻿using RPGCombatKata.Api.Characters;
 using RPGCombatKata.Api.Data;
+using RPGCombatKata.Api.Service.Exceptions;
+using RPGCombatKata.Api.Service.Factories;
 using RPGCombatKata.Domain;
 using RPGCombatKata.Domain.Data;
 using System.Net;
@@ -11,7 +13,7 @@ namespace RPGCombatKata.Api.Service.Services
         private ICharacterReader _characterReader;
         private ICharacterWriter _characterWriter;
 
-        public CharactersService(ICharacterWriter characterWriter,ICharacterReader characterReader)
+        public CharactersService(ICharacterWriter characterWriter, ICharacterReader characterReader)
         {
             _characterReader = characterReader;
             _characterWriter = characterWriter;
@@ -20,21 +22,14 @@ namespace RPGCombatKata.Api.Service.Services
         public async Task<GetAllCharactersResponse> GetAllCharacters()
         {
             var characters = await _characterReader.GetAllCharacters();
-            if (characters != null)
-            {
-                return new GetAllCharactersResponse
-                {
-                    characters = characters,
-                    Status = HttpStatusCode.OK,
-                    Message = "Success, Returning Characters."
-                };
-            }
+
             return new GetAllCharactersResponse
             {
-                characters = null,
-                Status = HttpStatusCode.NotFound,
-                Message = "No Characters Found."
+                characters = characters,
+                Status = HttpStatusCode.OK,
+                Message = "Success, Returning Characters."
             };
+
         }
 
         public async Task<GetCharacterResponse> GetCharacter(Guid characterId)
@@ -49,12 +44,7 @@ namespace RPGCombatKata.Api.Service.Services
                     Message = "Success. Returning Character."
                 };
             }
-            return new GetCharacterResponse
-            {
-                character = null,
-                Status = HttpStatusCode.NotFound,
-                Message = "CharacterID Not Found."
-            };
+            throw new EntityNotFoundException(nameof(character), characterId);
         }
 
         public async Task<CreateCharacterResponse> CreateCharacter()
@@ -62,7 +52,7 @@ namespace RPGCombatKata.Api.Service.Services
             var character = new Character();
             character.id = Guid.NewGuid();
             await _characterWriter.AddCharacter(character);
-  
+
             return new CreateCharacterResponse
             {
                 character = character,
@@ -73,34 +63,19 @@ namespace RPGCombatKata.Api.Service.Services
 
         public async Task<ApplyDamageResponse> ApplyDamage(Guid characterId, ApplyDamageRequest request)
         {
-            switch (request.damageType)
-            {
-                case DamageType.Normal :
-                   return await DamageCharacter(characterId,request.amount);
-                case DamageType.Healing:
-                   return await HealCharacter(characterId, request.amount);
-                default:
-                    return new ApplyDamageResponse { 
-                        damageDealt = 0, 
-                        Status = HttpStatusCode.NotFound , 
-                        Message = "DamageType was not valid."
-                    };
-            }        
-        }
-
-        private async Task<ApplyDamageResponse> DamageCharacter(Guid characterId, int amount)
-        {
             var character = await _characterReader.GetCharacter(characterId);
             if (character != null)
-            {
-                character.health -= amount;
-                var damageDealt = amount;
-                if (character.health < 0)
+            {                           
+                DamageServiceFactory factory = new DamageServiceFactory();
+                IDamageService damageService = factory.GetDamageService(request.damageType);
+                if (damageService == null)
                 {
-                    damageDealt += character.health;
-                    character.health = 0;
-                }
+                    throw new EntityNotFoundException(nameof(request.damageType), request.damageType);
 
+                }
+                var _ = damageService.ApplyDamage(character, request.amount);
+                character = _.Item1;
+                var damageDealt = _.Item2;
                 await _characterWriter.UpdateCharacter(character);
 
                 return new ApplyDamageResponse
@@ -117,44 +92,5 @@ namespace RPGCombatKata.Api.Service.Services
                 Message = "CharacterID Not Found."
             };
         }
-
-        private async Task<ApplyDamageResponse> HealCharacter(Guid characterId, int amount)
-        {
-            var character = await _characterReader.GetCharacter(characterId);
-            if (character != null)
-            {               
-                if (character.isAlive)
-                {
-                    character.health += amount;
-                    var damageDealt = amount;
-                    if (character.health > Character.MaxHealth)
-                    {
-                        damageDealt -= (character.health - Character.MaxHealth);
-                        character.health = Character.MaxHealth;           
-                    }
-
-                    await _characterWriter.UpdateCharacter(character);
-
-                    return new ApplyDamageResponse
-                    {
-                        damageDealt = damageDealt,
-                        Status = HttpStatusCode.OK,
-                        Message = "Character Healed Succesfully."
-                    };
-                }
-                return new ApplyDamageResponse
-                {
-                    damageDealt = 0,
-                    Status = HttpStatusCode.OK,
-                    Message = "Character is Dead and Can't be Healed."
-                };
-            }
-            return new ApplyDamageResponse
-            {
-                damageDealt = 0,
-                Status = HttpStatusCode.NotFound,
-                Message = "CharacterID Not Found."
-            };
-}
     }
 }
